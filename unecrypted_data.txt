@@ -1,0 +1,7 @@
+        ID       Name           Phone#         PUL   App Lvl   Pwd
+data = [(1, 'Chicken Wing',    '111-111-1111', 1000,    1,  'buffalo'),
+        (2, 'Cheese Cake',     '222-222-2222', 1000,    2,  'syrup'),
+        (3, 'Chantilly Cake',  '333-333-3333', 1000,    3,  'fruit'),
+        (4, 'Taco Pie',        '444-444-4444', 3000,    2,  'cheese'),
+        (5, 'Chocolate Tart',  '555-555-5555', 3000,    1,  'ganache'),
+        (6, 'Stromae Maestro', '777-777-7777', 4000,    1,  'papa')]

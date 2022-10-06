@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+</head>
+<body data-gr-c-s-loaded="true" style="margin: 0px;">
+    {% with msgs = get_flashed_messages() %}
+             {% if msgs %}
+                <ul>
+                   {% for message in msgs %}
+                   <li>{{ message }}</li>
+                   {% endfor %}
+                </ul>
+             {% endif %}
+        {% endwith %}
+
+{% if session['logged_in'] and (session['level_1'] or session['level_2']) %}
+    
+      <table border="1">
+         <thead>
+            <tr><td>Name</td>
+            <td>Phone Number</td>
+            <td>Prequalified Upper Limit</td>
+            <td>App Role Level</td>
+            <td>Login Password</td>
+         </tr></thead>
+          <tbody>
+          {% for row in rows %}
+          <tr>
+               <td>{{row["BidderName"]}}</td>
+               <td>{{row["PhoneNumber"]}}</td>
+               <td>{{row["PrequalifiedUpperLimit"]}}</td>
+               <td>{{row["AppRoleLevel"]}}</td>
+               <td>{{row["LoginPassword"]}}</td>
+            </tr>
+      {% endfor %}
+          </tbody>
+      </table>
+
+      <a href="/">Go back to home page</a>
+{% endif %}
+
+</body></html>

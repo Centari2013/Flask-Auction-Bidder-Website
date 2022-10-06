@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+</head>
+<body data-gr-c-s-loaded="true" style="margin: 0px;">
+{% with msgs = get_flashed_messages() %}
+         {% if msgs %}
+            <ul>
+               {% for message in msgs %}
+               <li>{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
+    {% endwith %}
+
+{% if session['logged_in'] %}
+    <h1>Welcome {{name}} </h1>
+        {% if session['level_1'] %}
+            <h2><a href="/enternewbidder">Add New Auction Bidder</a></h2>
+	        <h2><a href="/list_bidders">List Auction Bidders</a></h2>
+        {% endif %}
+
+        {% if session['level_2'] %}
+	        <h2><a href="/list_bidders">List Auction Bidders</a></h2>
+        {% endif %}
+
+	  <h2><a href="/logout">Log out</a></h2>
+{% endif %}
+
+</body></html>
