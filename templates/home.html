@@ -17,15 +17,16 @@
 {% if session['logged_in'] %}
     <h1>Welcome {{name}} </h1>
         {% if session['level_1'] %}
-            <h2><a href="/enternewbidder">Add New Auction Bidder</a></h2>
+            <h2><a href="/enter_new_bidder">Add New Auction Bidder</a></h2>
 	        <h2><a href="/list_bidders">List Auction Bidders</a></h2>
         {% endif %}
 
         {% if session['level_2'] %}
 	        <h2><a href="/list_bidders">List Auction Bidders</a></h2>
         {% endif %}
-
-	  <h2><a href="/logout">Log out</a></h2>
+        <h2><a href="/list_auction_items">List Auction Items</a></h2>
+        <h2><a href="/add_bid">Add Bid</a></h2>
+	    <h2><a href="/logout">Log out</a></h2>
 {% endif %}
 
 </body></html>
