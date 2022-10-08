@@ -4,6 +4,7 @@
 <head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 </head>
 <body data-gr-c-s-loaded="true" style="margin: 0px;">
+    Query Result :
       {% with msgs = get_flashed_messages() %}
          {% if msgs %}
             <ul>
@@ -13,8 +14,6 @@
             </ul>
          {% endif %}
     {% endwith %}
-
-      Query Result : {{ msg }}
       <h2><a href="/">back to home </a></h2>
 </body>
 </html>
