@@ -1,18 +1,21 @@
 """
 Name: Zaria Burton
 Date: 10/08/2022
-Assignment: Module 7: Send Encrypted Message
-Due Date: 10/09/2022
+Assignment: Module 8: Send Authenticated Message
+Due Date: 10/23/2022
 About this project: This script creates a flask website that accesses encrypted data in the Bidder.db
                     and encrypts and decrypts data as necessary for security. It also allows users to place bids, and
-                    these bids are sent to a processing server as encrypted messages. The datbase is then updated as
-                    necessary
-Note: Please run db setup scripts if the db or any tables are missing. Also, be sure to start the server script first
+                    these bids are sent to a processing server as either encrypted messages or authenticated messages.
+                    The database is then updated as necessary.
+
+Note: Please run db setup scripts if the db or any tables are missing. Also, be sure to start the server scripts first
         before trying to place any bids.
-All work below was performed by Zaria Burton
+
+All work below was performed by Zaria Burton.
 """
 
 from flask import Flask, render_template, request, session, flash
+import hashlib, hmac
 import sqlite3
 import os
 import encryption
@@ -147,6 +150,15 @@ def add_bid():
     else:
         flash('Page not found.')
 
+@app.route('/add_bid_HMAC')
+def add_bid_HMAC():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    elif session.get('level_1') or session.get('level_2') or session.get('level_3'):
+        return render_template('send_bid_HMAC.html')
+    else:
+        flash('Page not found.')
+
 
 @app.route('/send_bid', methods=['POST', 'GET'])
 def send_bid():
@@ -196,6 +208,83 @@ def send_bid():
                     message = str(session['id']) + delim + str(itemId) + delim + str(bid)
                     message = str(encryption.cipher.encrypt(bytes(message, 'utf-8')).decode('utf-8'))
                     bytesvalue = message.encode('utf-8')
+
+                    data = s.send(bytesvalue)
+                    print("Bytes sent: ", data)
+                    flash("Bid successfully sent!")
+
+                except Exception as e:
+                    print("Error:", e)
+                    flash("Error - Bid NOT sent")
+
+                finally:
+                    s.close()
+
+        except:
+            flash("Error - Bid NOT sent")
+
+        finally:
+            return render_template("result.html")
+
+
+@app.route('/send_bid_HMAC', methods=['POST', 'GET'])
+def send_bid_HMAC():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+
+    if request.method == 'POST':
+        try:
+            itemId = request.form['ItemId']
+            bid = request.form['Bid Amount']
+
+            # validate input
+            error = False
+
+            if (not itemId) or itemId.isspace():
+                flash("ItemId field cannot be empty.")
+                error = True
+            if (not bid) or bid.isspace():
+                flash("Bid Amount field cannot be empty.")
+                error = True
+
+            try:
+                itemId = int(itemId)
+                bid = int(bid)
+            except ValueError:
+                flash("ItemId and Bid Amount must be numerical integers.")
+                error = True
+                pass
+
+
+            if itemId < 0:
+                flash("ItemId must be greater than 0.")
+                error = True
+            if bid < 0:
+                flash("Bid Amount must be greater than 0.")
+                error = True
+
+            if not error:
+                s = socket()
+                try:
+                    s.setblocking(True)
+                    s.connect(("localhost", 8888))
+                    data = s.recv(2048)
+                    print(data.decode('utf-8'))
+
+                    # encrypt message using AES
+                    delim = ','
+                    message = str(session['id']) + delim + str(itemId) + delim + str(bid)
+                    messageEncrypted = (encryption.cipher.encrypt(bytes(message, 'utf-8')).decode('utf-8'))
+                    print('encrypted message: ', messageEncrypted)
+
+                    # encrypt message using HMAC
+                    secret = b'Macar0n11nAP0t'
+                    signature = hmac.new(secret, message.encode('utf-8'), digestmod=hashlib.sha3_512).digest()
+                    print('tag: ', signature)
+                    sentMessage = messageEncrypted + str(signature)
+                    print('sent message: ', sentMessage)
+
+                    bytesvalue = sentMessage.encode('utf-8')
 
                     data = s.send(bytesvalue)
                     print("Bytes sent: ", data)
