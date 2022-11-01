@@ -274,19 +274,19 @@ def send_bid_HMAC():
                     # encrypt message using AES
                     delim = ','
                     message = str(session['id']) + delim + str(itemId) + delim + str(bid)
-                    messageEncrypted = (encryption.cipher.encrypt(bytes(message, 'utf-8')).decode('utf-8'))
+                    messageEncrypted = encryption.cipher.encrypt(bytes(message, 'utf-8'))
                     print('encrypted message: ', messageEncrypted)
 
                     # encrypt message using HMAC
                     secret = b'Macar0n11nAP0t'
                     signature = hmac.new(secret, message.encode('utf-8'), digestmod=hashlib.sha3_512).digest()
                     print('tag: ', signature)
-                    sentMessage = messageEncrypted + str(signature)
+                    sentMessage = messageEncrypted + signature
                     print('sent message: ', sentMessage)
 
-                    bytesvalue = sentMessage.encode('utf-8')
+                    #bytesvalue = sentMessage.encode('utf-8')
 
-                    data = s.send(bytesvalue)
+                    data = s.send(sentMessage)
                     print("Bytes sent: ", data)
                     flash("Bid successfully sent!")
 

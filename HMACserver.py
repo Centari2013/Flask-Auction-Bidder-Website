@@ -36,21 +36,28 @@ try:
 
         # decrypt and authenticate bid request
         bidEncrypted = bid_request[:len(bid_request) - 64]
-        bid = bytes(encryption.cipher.decrypt(bidEncrypted), 'utf-8')
         tag = bid_request[-64:]
+        bid = bidEncrypted
+        print('Encrypted Bid: ', bidEncrypted)
+        try:
+            bid = bytes(encryption.cipher.decrypt(bidEncrypted).encode('utf-8'))
+            print('Unencrypted Bid: ', bid)
+        except:
+            print('Bid could not be decrypted.')
 
         if not verify(bid, tag):
-            print('bid unathenticated ', bid)
+            print('Unauthenticated Bid received! Be on alert! Watch out for bad guys !!!')
 
         else:
             print('bid authenticated ', bid)
 
             delim = ','
-
-            bid_request = bid_request.split(delim)
-            bidderId = int(bid_request[0])
-            itemId = int(bid_request[1])
-            bidAmt = int(bid_request[2])
+            bid = bid.decode('utf-8')
+            bid = bid.split(delim)
+            print(bid)
+            bidderId = int(bid[0])
+            itemId = int(bid[1])
+            bidAmt = int(bid[2])
 
             user_exists = False
             valid_bid = False
